@@ -1,0 +1,10 @@
+#!/usr/bin/python
+
+# The main invokation script for kylux
+
+import os
+
+os.system("make");
+os.system("make reset");
+os.system("make install");
+os.system("make run");

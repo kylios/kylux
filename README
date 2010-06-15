@@ -1,0 +1,52 @@
+kylux - Kyle's Unix
+    A simple unix-like operating system, developed mainly as a learning
+    experience in hopes that it will one day spawn the development of a
+    parallel operating system.
+
+Begin date: Dec 2009
+Primary Author: Kyle Racette
+Credits: OSDev, Bona Fide, James Malloy for his excellent os development
+    tutorials and code, Pintos for being easy to work with and understand
+License: kylux is released under the terms of the GNU GPLv3.  See 
+    LICENSE for more details.
+
+DIRECTORY STRUCTURE
+=======================================
+
+Kylux is organized into several directories to make code easier to manage
+and understand.  In the parent directory, one will find a src/ and 
+include/ directories.  They are direct mirrors of one another, with the
+sole difference being that include/ contains .h files, while src/ 
+contains .c and .S files.  In most cases, for every .c file, there will 
+be a corresponding .h file.  Not every .h file will have a corresponding
+.c file, but most will.  Most assembly files (denoted with a .S 
+extension) will not have a corresponding .h file.  
+
+Within the src/ or include/ directories, one will find several other
+directories to organize different types of files.  These directories and
+their purpose are listed below:
+
+arch/ - contains architecture-specific functions
+arch/XXX - contains functions specific to architecture XXX.
+lib/ - general purpose libraries and other shared files.  These functions
+    are not necessarily central to the kernel, but they are useful for
+    general os-related operations.
+lib/kernel/ - kernel-specific libraries.  Some files in here will include
+    functions for operating on different data structures.  Other files
+    will provide functions for printing and formatting strings, 
+    dynamically allocating memory, and other common tasks.
+lib/user/ - libraries that will be made available to user-level programs.
+    Some files in lib/ may provide backend functionality for kernel and
+    user level libraries, such as printf and malloc.
+kernel/ - Other functions that are more specific to kylux but
+    architecture-independant.  These may include interrupt handlers, 
+    paging code, and scheduling code.
+test/ - Test files for testing various kernel functionality.
+util/ - Miscellaneous utilities that make development or testing more
+    pleasant.
+misc/ - Things that don't belong in any other category.
+
+COMPILING
+=======================================
+
+Kylux has a custom Makefile

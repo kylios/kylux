@@ -1,0 +1,10 @@
+megs: 32
+#romimage: file=BIOS-bochs-latest, address=0xd7216
+vgaromimage: file=bochs/bios/VGABIOS-lgpl-latest
+vga: extension=none
+floppya: 1_44=/dev/loop0, status=inserted
+boot: a
+log: bochsout.txt
+mouse: enabled=0
+clock: sync=realtime
+cpu: ips=500000, reset_on_triple_fault=0
