@@ -29,14 +29,14 @@
 struct lock
 {
     struct semaphore sema;
-//    struct thread* holder;
+    struct thread* holder;
 };
 
 void lock_init (struct lock* lock);
 void lock_acquire (struct lock* lock);
 bool lock_try_acquire (struct lock* lock);
 void lock_release (struct lock* lock);
-//struct thread* lock_holder (struct lock* lock);
+struct thread* lock_holder (struct lock* lock);
 
 
 #endif  // KERNEL_LOCK_H

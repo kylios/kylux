@@ -22,6 +22,8 @@
 #include "common.h"
 #include "debug.h"
 #include "kernel/lock.h"
+#include "kernel/thread.h"
+#include "kernel/semaphore.h"
 
 void
 lock_init (struct lock* lock)
@@ -37,7 +39,7 @@ lock_acquire (struct lock* lock)
     ASSERT (lock != NULL);
 
     sema_down (&lock->sema);
-//    lock->holder = thread_current ();
+    lock->holder = thread_current ();
 };
 
 bool 
@@ -48,7 +50,7 @@ lock_try_acquire (struct lock* lock)
     ASSERT (lock != NULL);
 
     result = sema_try_down (&lock->sema);           
-//    if (result) lock->holder = thread_current ();
+    if (result) lock->holder = thread_current ();
     return result;
 };
 
@@ -56,9 +58,9 @@ void
 lock_release (struct lock* lock)
 {
     ASSERT (lock != NULL);
-//    ASSERT (lock_holder (lock) == thread_current ());
+    ASSERT (lock_holder (lock) == thread_current ());
 
-//    lock->holder = NULL;
+    lock->holder = NULL;
     sema_up (&lock->sema);
 };
 
@@ -67,6 +69,5 @@ lock_holder (struct lock* lock)
 {
     ASSERT (lock != NULL);
 
-//    return lock->holder;
-    return NULL;
+    return lock->holder;
 };

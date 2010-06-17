@@ -5,6 +5,7 @@
 #include "lib/kernel/kmalloc.h"
 #include "kernel/frame_mgr.h"
 #include "kernel/paging.h"
+#include "kernel/thread.h"
 #include "arch/x86/gdt.h"
 #include "arch/x86/idt.h"
 #include "arch/x86/pagedir.h"
@@ -40,9 +41,17 @@ static void init_bss ();
 
 extern struct pagedir* kernel_dir;
  
+/*
+ * Testing thread_create.  REMOVE WHEN DONE 
+ */
+static int test_thread_create_func (void*);
+
+
 int 
 main (multiboot_info_t *mboot_ptr, int magic)
 {
+    init_thread ();
+
     framebuf_init ();
     framebuf_clear ();
     framebuf_printf ("Welcome to Kylux!\n");
@@ -116,7 +125,9 @@ main (multiboot_info_t *mboot_ptr, int magic)
     /* Enable interrupts */
 //    asm volatile ("sti");
     
+
     // TODO: start the kernel here
+    tid_t tid = thread_create (PRI_MED, test_thread_create_func, NULL);
 
     return 0xDEADBABA;
 } 
@@ -132,6 +143,14 @@ void
 test_isr_2 (void)
 {
     framebuf_write ("Testing ISR function 2 \n");   
+};
+
+int 
+test_thread_create_func (void* aux)
+{
+    framebuf_printf ("I am speaking to you from a new thread! \n");
+
+    return 55;
 };
 
 void test_isr_3 (void)

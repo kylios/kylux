@@ -22,6 +22,7 @@
 #include "common.h"
 #include "debug.h"
 #include "kernel/semaphore.h"
+#include "kernel/thread.h"
 
 void 
 sema_init (struct semaphore* sema, int val)
@@ -40,17 +41,15 @@ sema_down (struct semaphore* sema)
 
     /* All accesses to this semaphore must be synchronized using the
        semaphore's internal spinlock. */
-    // TODO: is this better than just disabling interrupts?
     spinlock_acquire (&sema->sync);
 
     /* If the semaphore's value is at 0, then we must block the thread */
     while (sema->val == 0)
     {
-//      list_push_back (&sema->waiters, &thread_current ()->sched_elem);
+        list_push_back (&sema->waiters, &thread_current ()->elem);
         spinlock_release (&sema->sync);
 
-        // TODO Until this is implemented, the thread will busy wait
-        // thread_block ();
+        thread_block ();
 
         spinlock_acquire (&sema->sync);
     }
@@ -71,15 +70,6 @@ sema_try_down (struct semaphore* sema)
     result = (sema->val > 0);
     if (result)
     {
-        while (sema->val == 0)
-        {
-            spinlock_release (&sema->sync);
-
-            // busy wait...
-
-            spinlock_acquire (&sema->sync);
-        }
-
         sema->val--;
     }
     spinlock_release (&sema->sync);
@@ -93,9 +83,9 @@ sema_up (struct semaphore* sema)
 
     spinlock_acquire (&sema->sync);
     sema->val++;
-    // struct thread* t = LIST_ENTRY (
-    //      list_pop_back (&sema->waiters), struct thread, sched_elem);
+    struct thread* t = LIST_ENTRY (
+        list_pop_back (&sema->waiters), struct thread, elem);
     spinlock_release (&sema->sync);
-//    thread_unblock (t);
+    thread_unblock (t);
 };
 

@@ -196,7 +196,7 @@ pagedir_map (struct pagedir* pd, void* vaddr, void* paddr, bool writable)
 };
 
 void
-pagedir_unmap (struct pagedir* pd, vaid* vaddr)
+pagedir_unmap (struct pagedir* pd, void* vaddr)
 {
     ASSERT (pd != NULL);
     ASSERT (vaddr != NULL);
@@ -210,7 +210,7 @@ pagedir_unmap (struct pagedir* pd, vaid* vaddr)
     }
 
     struct page_table* pt = PDE_TO_PADDR(pde_entry);
-    pt->table[PTE_IDX(vaddr)] = 0;
+    pt->table[PTE_NO((uint32) vaddr)] = 0;
 };
 
 static pde 

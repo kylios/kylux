@@ -24,10 +24,15 @@
 #include "type.h"
 #include "common.h"
 #include "lib/kernel/list.h"
+#include "kernel/spinlock.h"
 
 #define THREAD_MAGIC    0x0DE703A7
 
-enum thread_state
+#define PRI_MIN 0
+#define PRI_MED 31
+#define PRI_MAX 63
+
+enum thread_status
 {
     THREAD_READY,
     THREAD_RUNNING, 
@@ -35,6 +40,7 @@ enum thread_state
     THREAD_DYING
 };
 
+#define TID_ERROR -1
 typedef int tid_t;
 
 struct thread
@@ -43,7 +49,7 @@ struct thread
     int priority;
     enum thread_status status;
 
-    uint32* stack;
+    uint8* stack;
 
     struct list_elem all_elem;
     struct list_elem elem;
@@ -59,8 +65,14 @@ typedef int thread_func (void*);
 /* Initializes the threading system.  */
 void init_thread ();
 
-struct thread* thread_create (int priority, thread_func* func, void* aux);
+tid_t thread_create (int priority, thread_func* func, void* aux);
 
+void thread_exit (int error_code);
+
+struct thread* thread_current ();
+
+void thread_block ();
+void thread_unblock ();
 
 
 #endif  // KERNEL_THREAD_H

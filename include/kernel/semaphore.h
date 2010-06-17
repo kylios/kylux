@@ -31,6 +31,10 @@ struct semaphore
 {
     int val;
     struct list waiters;
+
+    /* All accesses to the semaphore's internals must be synchronized
+       with a spinlock.  If we even want to support multiple cpu's, we
+       must do this instead of disabling interrupts. */
     struct spinlock sync;
 };
 

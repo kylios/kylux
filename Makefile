@@ -36,7 +36,8 @@ ARCH_X86_SRC	=	src/arch/x86/framebuf.o \
 					src/arch/x86/interrupt.o \
                     src/arch/x86/atomic.o \
 					src/arch/x86/timer.o \
-					src/arch/x86/pagedir.o
+					src/arch/x86/pagedir.o \
+                    src/arch/x86/thread.o
 
 # kernel/
 KERNEL_SRC		=   src/kernel/spinlock.o \
@@ -46,7 +47,8 @@ KERNEL_SRC		=   src/kernel/spinlock.o \
                     src/kernel/frame_mgr.o \
                     src/kernel/pagemap.o    \
 					src/kernel/paging.o \
-                    src/kernel/process.o
+                    src/kernel/process.o \
+                    src/kernel/thread.o
 
 # test/
 TEST_SRC        =   src/test/test.o
