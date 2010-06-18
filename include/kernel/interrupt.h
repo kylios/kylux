@@ -25,7 +25,7 @@
 #include "common.h"
 
 /* The current state of interrupts, either on or off. */
-enum intrrupt_state
+enum interrupt_state
 {
     INTERRUPT_OFF,
     INTERRUPT_ON

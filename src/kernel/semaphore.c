@@ -23,6 +23,7 @@
 #include "debug.h"
 #include "kernel/semaphore.h"
 #include "kernel/thread.h"
+#include "kernel/interrupt.h"
 
 void 
 sema_init (struct semaphore* sema, int val)
@@ -39,6 +40,7 @@ sema_down (struct semaphore* sema)
 {
     ASSERT (sema != NULL);
 
+    enum interrupt_state state = interrupt_off ();
     /* All accesses to this semaphore must be synchronized using the
        semaphore's internal spinlock. */
     spinlock_acquire (&sema->sync);
@@ -57,6 +59,7 @@ sema_down (struct semaphore* sema)
     /* Decrement the semaphore's value */
     sema->val--;
     spinlock_release (&sema->sync);
+    interrupt_restore (state);
 };
 
 bool
@@ -66,6 +69,7 @@ sema_try_down (struct semaphore* sema)
 
     ASSERT (sema != NULL);
 
+    enum interrupt_state state = interrupt_off ();
     spinlock_acquire (&sema->sync);
     result = (sema->val > 0);
     if (result)
@@ -73,6 +77,8 @@ sema_try_down (struct semaphore* sema)
         sema->val--;
     }
     spinlock_release (&sema->sync);
+    interrupt_restore (state);
+
     return result;
 };
 
@@ -81,11 +87,14 @@ sema_up (struct semaphore* sema)
 {
     ASSERT (sema != NULL);
 
+    enum interrupt_state state = interrupt_off ();
     spinlock_acquire (&sema->sync);
     sema->val++;
     struct thread* t = LIST_ENTRY (
         list_pop_back (&sema->waiters), struct thread, elem);
     spinlock_release (&sema->sync);
+
     thread_unblock (t);
+    interrupt_restore (state);
 };
 

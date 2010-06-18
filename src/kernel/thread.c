@@ -27,6 +27,7 @@
 #include "kernel/frame_mgr.h"
 #include "kernel/spinlock.h"
 #include "kernel/lock.h"
+#include "kernel/interrupt.h"
 
 struct kernel_thread_frame
 {
@@ -63,6 +64,9 @@ static tid_t next_tid;
 static uint32 thread_ticks; /* The number of ticks the current thread
                                has been running */
 
+static struct thread* idle_thread;  /* The idle thread */
+static struct thread* initial_thread;  /* The initial thread */
+
 static tid_t alloc_tid ();
 static bool thread_init (struct thread*, int priority, const char* name); 
 
@@ -73,7 +77,11 @@ static struct thread* running_thread ();
 static struct thread* switch_threads (struct thread*, struct thread*);
 static void switch_entry (void);
 static void schedule (void);
-static void schedule_tail (struct thread* prev);
+void schedule_tail (struct thread* prev);
+static struct thread* next_thread ();
+
+/* The routine used for the idle thread */
+static int idle (void* aux);
 
 uint32 thread_stack_offset;
 
@@ -92,10 +100,23 @@ init_thread ()
     thread_stack_offset = offsetof (struct thread, stack);
 
     t = running_thread ();
+    initial_thread = t;
 
     thread_init (t, PRI_MED, "main");
     t->tid = alloc_tid ();
     t->status = THREAD_RUNNING;
+};
+
+void
+start_threading ()
+{
+    struct semaphore thread_created;
+    sema_init (&thread_created, 0);
+
+    thread_create (PRI_MIN, &idle, &thread_created);
+    interrupt_on ();
+
+    sema_down (&thread_created);
 };
 
 tid_t
@@ -156,9 +177,12 @@ thread_current ()
 };
 
 void
-thread_block (struct thread* t)
+thread_block ()
 {
-    ASSERT (t != NULL);
+    ASSERT (interrupt_get_state () == INTERRUPT_OFF);
+
+    thread_current ()->status = THREAD_BLOCKED;
+    schedule ();
 };
 
 void
@@ -216,6 +240,31 @@ thread_init (struct thread* t, int priority, const char* name)
     return true;
 }; 
 
+void 
+thread_yield ()
+{
+    struct thread* cur = thread_current ();
+    enum interrupt_state state = interrupt_off ();
+
+    lock_acquire (&ready_list_lock);
+    if (cur != idle_thread)
+        list_push_back (&ready_list, &cur->elem);
+    cur->status = THREAD_READY;
+    lock_release (&ready_list_lock);
+    schedule ();
+
+    interrupt_restore (state);
+};
+
+void
+thread_tick ()
+{
+    thread_ticks++;
+
+    if (thread_ticks >= TIME_SLICE)
+        thread_yield ();
+};
+
 static void
 start_kernel_thread (thread_func* func, void* aux)
 {
@@ -226,7 +275,7 @@ start_kernel_thread (thread_func* func, void* aux)
     thread_exit (0);
 };
 
-static void 
+void 
 schedule_tail (struct thread* prev)
 {
     struct thread* cur = running_thread ();
@@ -237,7 +286,7 @@ schedule_tail (struct thread* prev)
 
     thread_ticks = 0;
 
-    if (prev != NULL && prev->status == THREAD_DYING && prev != init_thread)
+    if (prev != NULL && prev->status == THREAD_DYING && prev != initial_thread)
     {
         ASSERT (prev != cur);
         frame_mgr_free (prev);
@@ -247,9 +296,40 @@ schedule_tail (struct thread* prev)
 static void 
 schedule (void)
 {
-    struct thread* cur;
-    struct thread* next;
-    struct thread* prev;
+    struct thread* cur = running_thread ();
+    struct thread* next = next_thread ();
+    struct thread* prev = NULL;
+
+    ASSERT (cur->status != THREAD_RUNNING);
+    ASSERT (interrupt_get_state () == INTERRUPT_OFF);
+    ASSERT (next->magic == THREAD_MAGIC);
+
+    if (cur != next)
+        prev = switch_threads (cur, next);
+    schedule_tail (prev);
+};
+
+/* Schedules the next thread to run */
+static struct thread* 
+next_thread ()
+{
+    if (!list_empty (&ready_list))
+        return LIST_ENTRY (list_pop_front (&ready_list), 
+            struct thread, elem);
+    else
+        return idle_thread;
+};
 
 
+static int 
+idle (void* aux)
+{
+    struct semaphore* sema = aux;
+
+    ASSERT (aux != NULL);
+    sema_up (sema);
+
+    while (1);
+
+    return 0;
 };

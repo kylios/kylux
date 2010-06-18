@@ -32,6 +32,8 @@
 #define PRI_MED 31
 #define PRI_MAX 63
 
+#define TIME_SLICE  100
+
 enum thread_status
 {
     THREAD_READY,
@@ -68,11 +70,12 @@ void init_thread ();
 tid_t thread_create (int priority, thread_func* func, void* aux);
 
 void thread_exit (int error_code);
+void thread_yield ();
 
 struct thread* thread_current ();
 
-void thread_block ();
-void thread_unblock ();
+void thread_block (void);
+void thread_unblock (struct thread*);
 
 /* Called each time the hardware timer fires.
    Do things here with scheduling and thread
