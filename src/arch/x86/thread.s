@@ -30,6 +30,13 @@ switch_threads:
 
 [GLOBAL switch_entry]
 
+extern schedule_tail
+
 switch_entry:
+    add esp, 8
+
+    push eax
+    call schedule_tail
+    add esp, 4
 
     ret

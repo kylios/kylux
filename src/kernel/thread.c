@@ -60,6 +60,8 @@ static struct lock ready_list_lock;
 
 static struct spinlock tid_lock;
 static tid_t next_tid;
+static uint32 thread_ticks; /* The number of ticks the current thread
+                               has been running */
 
 static tid_t alloc_tid ();
 static bool thread_init (struct thread*, int priority, const char* name); 
@@ -70,6 +72,8 @@ static void start_kernel_thread (thread_func*, void*);
 static struct thread* running_thread ();
 static struct thread* switch_threads (struct thread*, struct thread*);
 static void switch_entry (void);
+static void schedule (void);
+static void schedule_tail (struct thread* prev);
 
 uint32 thread_stack_offset;
 
@@ -220,4 +224,32 @@ start_kernel_thread (thread_func* func, void* aux)
     /* Execute the function and then clean up the thread */
     func (aux);
     thread_exit (0);
+};
+
+static void 
+schedule_tail (struct thread* prev)
+{
+    struct thread* cur = running_thread ();
+
+    ASSERT (prev != NULL);
+
+    cur->status = THREAD_RUNNING;
+
+    thread_ticks = 0;
+
+    if (prev != NULL && prev->status == THREAD_DYING && prev != init_thread)
+    {
+        ASSERT (prev != cur);
+        frame_mgr_free (prev);
+    }
+};
+
+static void 
+schedule (void)
+{
+    struct thread* cur;
+    struct thread* next;
+    struct thread* prev;
+
+
 };

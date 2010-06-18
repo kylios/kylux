@@ -74,5 +74,9 @@ struct thread* thread_current ();
 void thread_block ();
 void thread_unblock ();
 
+/* Called each time the hardware timer fires.
+   Do things here with scheduling and thread
+   sleeping */
+void thread_tick ();     
 
 #endif  // KERNEL_THREAD_H

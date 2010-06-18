@@ -1,3 +1,19 @@
+[GLOBAL enable_interrupts]
+
+; Enables interrupts
+enable_interrupts:
+
+    cli
+    ret
+
+[GLOBAL disable_interrupts]
+
+; Disable interrupts
+disable_interrupts:
+
+    sti
+    ret
+
 [GLOBAL idt_finalize]    ; Allows the C code to call idt_flush().
 
 idt_finalize:

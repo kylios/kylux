@@ -48,7 +48,8 @@ KERNEL_SRC		=   src/kernel/spinlock.o \
                     src/kernel/pagemap.o    \
 					src/kernel/paging.o \
                     src/kernel/process.o \
-                    src/kernel/thread.o
+                    src/kernel/thread.o \
+                    src/kernel/interrupt.o
 
 # test/
 TEST_SRC        =   src/test/test.o

@@ -4,6 +4,7 @@
 #include "arch/x86/io_bus.h"
 #include "lib/kernel/framebuf.h"
 #include "lib/stdio.h"
+#include "kernel/thread.h"
 
 /* 50 hZ */
 static const uint32 timer_freq = 50;
@@ -16,7 +17,7 @@ static void timer_tick (struct registers* regs);
 void
 init_timer ()
 {
-    asm volatile ("sti");
+    interrupt_off ();
 
     /* Register the timer callback. */
     isr_reg_func (IRQ0, &timer_tick);
@@ -32,8 +33,7 @@ init_timer ()
     outb (0x40, (uint8) divisor & 0xFF);
     outb (0x40, (uint8) (divisor >> 8) & 0xFF);
 
-    asm volatile ("cli");
-
+    interrupt_on ();
     printf ("Timer initialized \n");
 };
 
@@ -42,4 +42,5 @@ timer_tick (struct registers* regs)
 {
     ticks++;
 //    framebuf_printf ("tick: %u \n", ticks);
+    thread_tick ();
 };
