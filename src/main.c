@@ -124,6 +124,7 @@ main (multiboot_info_t *mboot_ptr, int magic)
 
     /* Enable interrupts */
 //    asm volatile ("sti");
+    start_threading ();
     
 
     // TODO: start the kernel here

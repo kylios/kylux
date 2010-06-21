@@ -3,6 +3,7 @@
 #include "type.h"
 #include "debug.h"
 #include "lib/kernel/test.h"
+#include "lib/kernel/framebuf.h"
 
 void 
 list_init (struct list* list)
@@ -49,7 +50,11 @@ list_pop_front (struct list* list)
 {
     ASSERT (list != NULL);
 
+    if (list_empty (list))
+        return NULL;
+
     struct list_elem* e = list_front (list);
+    ASSERT (e != NULL);
     list_remove (e);
     return e;
 };
@@ -88,6 +93,8 @@ list_remove (struct list_elem* elem)
     ASSERT (elem != NULL);
     ASSERT (elem->next != NULL);
     ASSERT (elem->prev != NULL);
+    ASSERT (elem->next != elem);
+    ASSERT (elem->prev != elem);
 
     elem->next->prev = elem->prev;
     elem->prev->next = elem->next;

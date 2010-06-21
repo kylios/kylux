@@ -18,7 +18,7 @@ static void timer_tick (struct registers* regs);
 void
 init_timer ()
 {
-    enum interrupt_state state = interrupt_off ();
+    interrupt_off ();
 
     /* Register the timer callback. */
     isr_reg_func (IRQ0, &timer_tick);
@@ -34,7 +34,6 @@ init_timer ()
     outb (0x40, (uint8) divisor & 0xFF);
     outb (0x40, (uint8) (divisor >> 8) & 0xFF);
 
-    interrupt_restore (state);
     printf ("Timer initialized \n");
 };
 

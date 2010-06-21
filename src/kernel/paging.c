@@ -40,6 +40,6 @@ init_paging ()
 void
 page_fault (struct registers* regs)
 {
-
+    debug_backtrace ();
     PANIC ("Page fault!");
 };

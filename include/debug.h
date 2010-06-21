@@ -24,6 +24,11 @@ void hexdump (void* start, uint32 sz);
     printf ("!!!KERNEL PANIC: %s \n", MSG); \
     while (1);  
 
+#define NOT_REACHED \
+    debug_backtrace (); \
+    PANIC("unreachable statement \n");  
+    
+
 
 #endif // DEBUG_H
 

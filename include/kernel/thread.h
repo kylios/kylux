@@ -53,6 +53,8 @@ struct thread
 
     uint8* stack;
 
+    char[16] name;  /* Name of the thread, used for debugging. */
+
     struct list_elem all_elem;
     struct list_elem elem;
 
@@ -81,5 +83,7 @@ void thread_unblock (struct thread*);
    Do things here with scheduling and thread
    sleeping */
 void thread_tick ();     
+
+int thread_printf (const char*, ...);
 
 #endif  // KERNEL_THREAD_H

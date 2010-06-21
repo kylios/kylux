@@ -43,22 +43,22 @@ sema_down (struct semaphore* sema)
     enum interrupt_state state = interrupt_off ();
     /* All accesses to this semaphore must be synchronized using the
        semaphore's internal spinlock. */
-    spinlock_acquire (&sema->sync);
+//    spinlock_acquire (&sema->sync);
 
     /* If the semaphore's value is at 0, then we must block the thread */
     while (sema->val == 0)
     {
         list_push_back (&sema->waiters, &thread_current ()->elem);
-        spinlock_release (&sema->sync);
+//        spinlock_release (&sema->sync);
 
         thread_block ();
 
-        spinlock_acquire (&sema->sync);
+//        spinlock_acquire (&sema->sync);
     }
 
     /* Decrement the semaphore's value */
     sema->val--;
-    spinlock_release (&sema->sync);
+//    spinlock_release (&sema->sync);
     interrupt_restore (state);
 };
 
@@ -70,13 +70,13 @@ sema_try_down (struct semaphore* sema)
     ASSERT (sema != NULL);
 
     enum interrupt_state state = interrupt_off ();
-    spinlock_acquire (&sema->sync);
+//    spinlock_acquire (&sema->sync);
     result = (sema->val > 0);
     if (result)
     {
         sema->val--;
     }
-    spinlock_release (&sema->sync);
+//    spinlock_release (&sema->sync);
     interrupt_restore (state);
 
     return result;
@@ -88,11 +88,11 @@ sema_up (struct semaphore* sema)
     ASSERT (sema != NULL);
 
     enum interrupt_state state = interrupt_off ();
-    spinlock_acquire (&sema->sync);
+//    spinlock_acquire (&sema->sync);
     sema->val++;
     struct thread* t = LIST_ENTRY (
         list_pop_back (&sema->waiters), struct thread, elem);
-    spinlock_release (&sema->sync);
+//    spinlock_release (&sema->sync);
 
     thread_unblock (t);
     interrupt_restore (state);
