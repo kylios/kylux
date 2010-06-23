@@ -105,6 +105,8 @@ init_thread ()
     thread_init (t, PRI_MED, "main");
     t->tid = alloc_tid ();
     t->status = THREAD_RUNNING;
+
+    thread_current ();
 };
 
 void
@@ -114,18 +116,16 @@ start_threading ()
     struct semaphore thread_created;
     sema_init (&thread_created, 0);
 
-    framebuf_printf ("Creating idle thread \n");
-    thread_create (PRI_MIN, &idle, &thread_created);
+    thread_create (PRI_MIN, "idle", &idle, &thread_created);
     interrupt_on ();
 
-    framebuf_printf ("idle thread created... blocking \n");
-    while (1);
     sema_down (&thread_created);
-    framebuf_printf ("unblocked.  Idle thread has ran and is in ready queue\n");
 };
 
-    tid_t
-thread_create (int priority, thread_func* func, void* aux)
+
+tid_t
+thread_create (int priority, const char* name, 
+        thread_func* func, void* aux)
 {
     struct thread* t;
     struct kernel_thread_frame* kf;
@@ -133,6 +133,7 @@ thread_create (int priority, thread_func* func, void* aux)
     struct switch_threads_frame* sf;
 
     ASSERT (func != NULL);
+    ASSERT (name != NULL);
     ASSERT (priority <= PRI_MAX);
     ASSERT (priority >= PRI_MIN);
 
@@ -142,7 +143,7 @@ thread_create (int priority, thread_func* func, void* aux)
         return TID_ERROR;    
     }
     t->tid = alloc_tid ();
-    thread_init (t, priority, "test");
+    thread_init (t, priority, name);
 
     kf = (struct kernel_thread_frame*) (t->stack - sizeof (*kf));
     kf->eip = NULL;
@@ -164,13 +165,13 @@ thread_create (int priority, thread_func* func, void* aux)
     return t->tid;
 };
 
-    void
+void
 thread_exit (int exit_code)
 {
 
 };
 
-    struct thread*
+struct thread*
 thread_current ()
 {
     struct thread* t = running_thread ();
@@ -181,7 +182,7 @@ thread_current ()
     return t;
 };
 
-    void
+void
 thread_block ()
 {
     ASSERT (interrupt_get_state () == INTERRUPT_OFF);
@@ -190,20 +191,20 @@ thread_block ()
     schedule ();
 };
 
-    void
+void
 thread_unblock (struct thread* t)
 {
     ASSERT (t != NULL);
 
-//    lock_acquire (&ready_list_lock);
+    //    lock_acquire (&ready_list_lock);
     enum interrupt_state state = interrupt_off ();
     t->status = THREAD_READY;
     list_push_back (&ready_list, &t->elem);
-//    lock_release (&ready_list_lock);
+    //    lock_release (&ready_list_lock);
     interrupt_restore (state);
 };
 
-    static struct thread*
+static struct thread*
 running_thread ()
 {
     uint8* esp;
@@ -211,12 +212,11 @@ running_thread ()
 
     asm volatile ("mov %%esp, %0" : "=g" (esp));
     t = (struct thread*) ROUND_DOWN((uint32) esp, PAGE_SIZE);
-    framebuf_printf ("running_thread: %p \n", t);
 
     return t;
 };
 
-    static tid_t
+static tid_t
 alloc_tid (void)
 {
     tid_t tid;
@@ -229,7 +229,7 @@ alloc_tid (void)
     return tid;
 };
 
-    static bool 
+static bool 
 thread_init (struct thread* t, int priority, const char* name)
 {
     ASSERT (t != NULL);
@@ -240,31 +240,34 @@ thread_init (struct thread* t, int priority, const char* name)
 
     t->status = THREAD_BLOCKED;
     t->priority = priority;
-    t->stack = (uint8*) t + PAGE_SIZE;
+    t->stack = ((uint8*) t) + PAGE_SIZE;
     t->magic = THREAD_MAGIC;
+
+    strncpy (t->name, name, 15);
 
     list_push_back (&all_list, &t->all_elem);
 
     return true;
 }; 
 
-    void 
+void 
 thread_yield ()
 {
+    uint8* esp;
+    asm volatile ("mov %%esp, %0" : "=g" (esp));
+
     struct thread* cur = thread_current ();
     enum interrupt_state state = interrupt_off ();
 
-    //    lock_acquire (&ready_list_lock);
-    if (cur != idle_thread)
+//    if (cur != idle_thread)
         list_push_back (&ready_list, &cur->elem);
     cur->status = THREAD_READY;
-    //    lock_release (&ready_list_lock);
     schedule ();
 
     interrupt_restore (state);
 };
 
-    void
+void
 thread_tick ()
 {
     thread_ticks++;
@@ -273,7 +276,7 @@ thread_tick ()
         thread_yield ();
 };
 
-    static void
+static void
 start_kernel_thread (thread_func* func, void* aux)
 {
     ASSERT (func);
@@ -283,7 +286,7 @@ start_kernel_thread (thread_func* func, void* aux)
     thread_exit (0);
 };
 
-    void 
+void 
 schedule_tail (struct thread* prev)
 {
     struct thread* cur = running_thread ();
@@ -301,17 +304,20 @@ schedule_tail (struct thread* prev)
     }
 };
 
-    static void 
+static void 
 schedule (void)
 {
     struct thread* cur = running_thread ();
     struct thread* next = next_thread ();
-    struct thread* prev = NULL;
+    struct thread* prev = cur;
 
     ASSERT (cur->status != THREAD_RUNNING);
     ASSERT (interrupt_get_state () == INTERRUPT_OFF);
     ASSERT (next->magic == THREAD_MAGIC);
 
+    framebuf_printf ("cur: %p \n", cur);
+    framebuf_printf ("next: %p \n", next);
+    framebuf_printf ("prev: %p \n", prev);
     if (cur != next)
         prev = switch_threads (cur, next);
     schedule_tail (prev);
@@ -336,16 +342,32 @@ idle (void* aux)
 
     ASSERT (aux != NULL);
 
-    framebuf_printf ("IDLE: upping semaphore \n");
     sema_up (sema);
-    framebuf_printf ("IDLE: semaphore upped \n");
 
     while (1)
     {
-        framebuf_printf ("idle thread running \n");
+        thread_printf ("idle thread running \n");
         thread_yield ();
     };
 
     NOT_REACHED;
     return 0;
+};
+
+int 
+thread_printf (const char* fmt, ...)
+{
+    va_list args;
+
+    ASSERT (fmt != NULL);
+    va_start (args, fmt);
+
+
+//    framebuf_printf ("%s: ", thread_current ()->name);
+    int val = vprintf (fmt, args);
+    framebuf_printf ("\n");
+
+    va_end (args);
+
+    return val;
 };

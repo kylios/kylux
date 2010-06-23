@@ -90,16 +90,15 @@ test:
 	all 
 
 clean:
-	for d in $(DIRS); do rm src/$$d/*.o >/dev/null; rm src/$$d/.*.swo >/dev/null; rm src/$$d/.*.swp >/dev/null; done
-	for d in $(DIRS); do rm include/$$d/.*.swo >/dev/null; rm include/$$d/.*.swp >/dev/null; done
-	-rm .*.swp
-	-rm .*.swo
-	-rm kernel
-	-rm *.i
-	-rm *.s
+	for d in $(DIRS); do -rm src/$$d/*.o 2>/dev/null; -rm src/$$d/.*.swo 2>/dev/null; -rm src/$$d/.*.swp 2>/dev/null; done
+	for d in $(DIRS); do rm -include/$$d/.*.swo 2>/dev/null; -rm include/$$d/.*.swp 2>/dev/null; done
+	-rm .*.swp 2>/dev/null
+	-rm .*.swo 2>/dev/null
+	-rm kernel 2>/dev/null
+	-rm *.i 2>/dev/null
+	-rm *.s 2>/dev/null
 
-kylux:
-	FORCE
+kylux:		FORCE
 	sudo make reset && make && make install && make run
 
 # Creates a loopback, causing all writes to /dev/loop0 to go to 

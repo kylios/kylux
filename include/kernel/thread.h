@@ -53,7 +53,7 @@ struct thread
 
     uint8* stack;
 
-    char[16] name;  /* Name of the thread, used for debugging. */
+    char name[16];  /* Name of the thread, used for debugging. */
 
     struct list_elem all_elem;
     struct list_elem elem;
@@ -68,8 +68,9 @@ typedef int thread_func (void*);
 
 /* Initializes the threading system.  */
 void init_thread ();
+void start_threading ();
 
-tid_t thread_create (int priority, thread_func* func, void* aux);
+tid_t thread_create (int priority, const char*, thread_func* func, void*);
 
 void thread_exit (int error_code);
 void thread_yield ();

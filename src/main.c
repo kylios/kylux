@@ -6,6 +6,7 @@
 #include "kernel/frame_mgr.h"
 #include "kernel/paging.h"
 #include "kernel/thread.h"
+#include "kernel/interrupt.h"
 #include "arch/x86/gdt.h"
 #include "arch/x86/idt.h"
 #include "arch/x86/pagedir.h"
@@ -50,7 +51,7 @@ static int test_thread_create_func (void*);
 int 
 main (multiboot_info_t *mboot_ptr, int magic)
 {
-    init_thread ();
+//    init_thread ();
 
     framebuf_init ();
     framebuf_clear ();
@@ -58,6 +59,10 @@ main (multiboot_info_t *mboot_ptr, int magic)
 
     /* Clear the BSS */
     init_bss ();
+
+    /* Our start-up routine will "pretend" to be a thread.  This can only
+       happen since the top of the stack started out page aligned */
+    init_thread ();
 
     /* Maybe one day we won't have to rely on multiboot compliance, but
        for now that's not my primary concern.  If you can't install grub
@@ -115,6 +120,7 @@ main (multiboot_info_t *mboot_ptr, int magic)
     // PAGE FAULTING WORKS UP TO THIS POINT AND WE HAVE A PAGE DIR
     // THAT MAPS THE FIRST 8MiB (??) 
 
+    ASSERT (interrupt_get_state () == INTERRUPT_OFF);
     /* Initialise the hardware timer */
     init_timer ();
 
@@ -126,9 +132,14 @@ main (multiboot_info_t *mboot_ptr, int magic)
 //    asm volatile ("sti");
     start_threading ();
     
+    ASSERT (interrupt_get_state () == INTERRUPT_ON);
 
     // TODO: start the kernel here
-    tid_t tid = thread_create (PRI_MED, test_thread_create_func, NULL);
+    tid_t tid = thread_create (PRI_MED, "test thread 1", test_thread_create_func, NULL);
+
+    while (1)   {
+        framebuf_printf ("main thread speaking \n");
+       }
 
     return 0xDEADBABA;
 } 
@@ -150,6 +161,9 @@ int
 test_thread_create_func (void* aux)
 {
     framebuf_printf ("I am speaking to you from a new thread! \n");
+    while(1)    {
+        framebuf_printf ("This is test thread 1 \n");
+    }
 
     return 55;
 };

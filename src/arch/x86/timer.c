@@ -41,6 +41,7 @@ void
 timer_tick (struct registers* regs)
 {
     ticks++;
+
 //    framebuf_printf ("tick: %u \n", ticks);
     thread_tick ();
 };

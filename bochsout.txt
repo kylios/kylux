@@ -36,7 +36,7 @@
 00000000000i[MEM0 ] rom at 0xc0000/40448 ('bochs/bios/VGABIOS-lgpl-latest')
 00000000000i[VTIME] using 'realtime pit' synchronization method
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Sat Jun 19 15:07:54 2010 (time0=1276974474)
+00000000000i[CMOS ] Setting initial clock to: Tue Jun 22 22:46:08 2010 (time0=1277261168)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000e[FDD  ] cannot determine media geometry, trying to use defaults
@@ -85,44 +85,44 @@
 00000000000i[     ] reset of 'parallel' plugin device by virtual method
 00000000000i[XGUI ] [x] Mouse off
 00000003305i[BIOS ] $Revision: 1.243 $ $Date: 2010/01/14 07:04:39 $
-00000336677i[KBD  ] reset-disable command received
-00000461687i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
-00000464694i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
+00000316446i[KBD  ] reset-disable command received
+00000441532i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
+00000444539i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
+00000475000i[XGUI ] charmap update. Font Height is 16
 00000525000i[XGUI ] charmap update. Font Height is 16
-00000769842i[BIOS ] Starting rombios32
-00000770339i[BIOS ] Shutdown flag 0
-00000771020i[BIOS ] ram_size=0x02000000
-00000771498i[BIOS ] ram_end=32MB
-00000807776i[BIOS ] Found 1 cpu(s)
-00000827003i[BIOS ] bios_table_addr: 0x000fbba8 end=0x000fcc00
-00000842366i[BIOS ] MP table addr=0x000fbc80 MPC table addr=0x000fbbb0 size=0xd0
-00000844210i[BIOS ] SMBIOS table addr=0x000fbc90
-00000845093i[BIOS ] bios_table_cur_addr: 0x000fbd94
-00023559635i[BIOS ] Booting from 0000:7c00
-00025177391i[BIOS ] int13_harddisk: function 41, unmapped device for ELDL=80
-00025182168i[BIOS ] int13_harddisk: function 08, unmapped device for ELDL=80
-00025186821i[BIOS ] *** int 15h function AX=00c0, BX=0000 not yet supported!
-00202400000e[XGUI ] xkeypress(): keysym ffeb unhandled!
-00203659000i[     ] cpu loop quit, shutting down simulator
-00203659000i[CPU0 ] CPU is in protected mode (active)
-00203659000i[CPU0 ] CS.d_b = 32 bit
-00203659000i[CPU0 ] SS.d_b = 32 bit
-00203659000i[CPU0 ] | EAX=00000021  EBX=0002d000  ECX=00000000  EDX=000003d5
-00203659000i[CPU0 ] | ESP=00067e40  EBP=00067e88  ESI=00053c8e  EDI=00053c8f
-00203659000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
-00203659000i[CPU0 ] | SEG selector     base    limit G D
-00203659000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00203659000i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00203659000i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00203659000i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00203659000i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00203659000i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00203659000i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00203659000i[CPU0 ] | EIP=00104f9c (00104f9c)
-00203659000i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
-00203659000i[CPU0 ] | CR3=0x0010b000 CR4=0x00000000
-00203659000i[CPU0 ] 0x00104f9c>> jmp .-2 (0x00104f9c) : EBFE
-00203659000i[CMOS ] Last time is 1276974881 (Sat Jun 19 15:14:41 2010)
-00203659000i[XGUI ] Exit
-00203659000i[     ] restoring default signal behavior
-00203659000i[CTRL ] quit_sim called with exit code 1
+00000749687i[BIOS ] Starting rombios32
+00000750184i[BIOS ] Shutdown flag 0
+00000750865i[BIOS ] ram_size=0x02000000
+00000751343i[BIOS ] ram_end=32MB
+00000789577i[BIOS ] Found 1 cpu(s)
+00000808804i[BIOS ] bios_table_addr: 0x000fbba8 end=0x000fcc00
+00000824167i[BIOS ] MP table addr=0x000fbc80 MPC table addr=0x000fbbb0 size=0xd0
+00000826011i[BIOS ] SMBIOS table addr=0x000fbc90
+00000826894i[BIOS ] bios_table_cur_addr: 0x000fbd94
+00025235239i[BIOS ] Booting from 0000:7c00
+00026852924i[BIOS ] int13_harddisk: function 41, unmapped device for ELDL=80
+00026857701i[BIOS ] int13_harddisk: function 08, unmapped device for ELDL=80
+00026862354i[BIOS ] *** int 15h function AX=00c0, BX=0000 not yet supported!
+00082492500p[XGUI ] >>PANIC<< POWER button turned off.
+00082492500i[CPU0 ] CPU is in protected mode (active)
+00082492500i[CPU0 ] CS.d_b = 32 bit
+00082492500i[CPU0 ] SS.d_b = 32 bit
+00082492500i[CPU0 ] | EAX=00000f20  EBX=0000077f  ECX=00000000  EDX=000b8f40
+00082492500i[CPU0 ] | ESP=00067c40  EBP=00067c68  ESI=00053c8e  EDI=00053c8f
+00082492500i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
+00082492500i[CPU0 ] | SEG selector     base    limit G D
+00082492500i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00082492500i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00082492500i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00082492500i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00082492500i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00082492500i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00082492500i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00082492500i[CPU0 ] | EIP=00101205 (00101205)
+00082492500i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
+00082492500i[CPU0 ] | CR3=0x0010c000 CR4=0x00000000
+00082492500i[CPU0 ] 0x00101205>> cmp dword ptr ss:[ebp-16], 0x000007cf : 817DF0CF070000
+00082492500i[CMOS ] Last time is 1277261332 (Tue Jun 22 22:48:52 2010)
+00082492500i[XGUI ] Exit
+00082492500i[     ] restoring default signal behavior
+00082492500i[CTRL ] quit_sim called with exit code 1

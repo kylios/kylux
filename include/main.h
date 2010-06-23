@@ -15,7 +15,6 @@ struct koptions
 {
 	uint32 kernel_frames;
 	uint32 user_frames;
-
 };
 
 #endif // MAIN_H
