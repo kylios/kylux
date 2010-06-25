@@ -74,8 +74,8 @@ static bool thread_init (struct thread*, int priority, const char* name);
 static void start_kernel_thread (thread_func*, void*);
 
 static struct thread* running_thread ();
-static struct thread* switch_threads (struct thread*, struct thread*);
-static void switch_entry (void);
+struct thread* switch_threads (struct thread*, struct thread*);
+void switch_entry (void);
 static void schedule (void);
 void schedule_tail (struct thread* prev);
 static struct thread* next_thread ();
@@ -113,13 +113,25 @@ void
 start_threading ()
 {
     ASSERT (interrupt_get_state () == INTERRUPT_OFF);
-    struct semaphore thread_created;
-    sema_init (&thread_created, 0);
+//    struct semaphore thread_created;
+    struct spinlock thread_created;
+    spinlock_init (&thread_created);
+    spinlock_acquire (&thread_created);
+//    sema_init (&thread_created, 0);
 
-    thread_create (PRI_MIN, "idle", &idle, &thread_created);
+    framebuf_printf ("creating a new thread \n");
+    tid_t tid = thread_create (PRI_MIN, "idle", &idle, &thread_created);
+    framebuf_printf ("created the new thread... enabling interrupts \n");
+    if (tid == TID_ERROR)
+    {
+        PANIC ("ERROR creating idle thread!! \n");
+    }
     interrupt_on ();
 
-    sema_down (&thread_created);
+    framebuf_printf ("interrupts enabled, trying to acquire the spinlock \n");
+//    sema_down (&thread_created);
+    spinlock_acquire (&thread_created);
+    framebuf_printf ("got the lock! \n");
 };
 
 
@@ -137,29 +149,45 @@ thread_create (int priority, const char* name,
     ASSERT (priority <= PRI_MAX);
     ASSERT (priority >= PRI_MIN);
 
-    t = frame_mgr_alloc (PAGE_SIZE, false, true);
+    enum interrupt_state state = interrupt_off ();
+    t = frame_mgr_alloc (1, false, true);
+    framebuf_printf ("new thread address: %p \n", t);
     if (t == NULL)
     {
+        interrupt_restore (state);
         return TID_ERROR;    
     }
+
     t->tid = alloc_tid ();
     thread_init (t, priority, name);
 
+    framebuf_printf ("new thread's stack: %p \n", t->stack);
     kf = (struct kernel_thread_frame*) (t->stack - sizeof (*kf));
     kf->eip = NULL;
     kf->func = func;
     kf->aux = aux;
+    t->stack -= sizeof (struct kernel_thread_frame);
+    framebuf_printf ("new thread's stack: %p \n", t->stack);
 
     ef = (struct switch_entry_frame*) (t->stack - sizeof (*ef));
     ef->eip = (void (*) (void)) start_kernel_thread;
+    t->stack -= sizeof (struct switch_entry_frame);
+    framebuf_printf ("new thread's stack: %p \n", t->stack);
 
     sf = (struct switch_threads_frame*) (t->stack - sizeof (*sf));
     sf->eip = switch_entry;
     sf->ebp = 0;
+    t->stack -= sizeof (struct switch_threads_frame);
+    framebuf_printf ("switch_threads_frame: %p, %d \n", sizeof (struct switch_threads_frame), sizeof (struct switch_threads_frame));
 
-    lock_acquire (&all_list_lock);
+    framebuf_printf ("new thread's stack: %p \n", t->stack);
+
+//    lock_acquire (&all_list_lock);
+    ASSERT (t->magic == THREAD_MAGIC);
     list_push_back (&all_list, &t->all_elem);
-    lock_release (&all_list_lock);
+//    lock_release (&all_list_lock);
+
+    interrupt_restore (state);
 
     thread_unblock (t);
     return t->tid;
@@ -195,11 +223,13 @@ void
 thread_unblock (struct thread* t)
 {
     ASSERT (t != NULL);
+    ASSERT (t->magic == THREAD_MAGIC);
 
     //    lock_acquire (&ready_list_lock);
     enum interrupt_state state = interrupt_off ();
+    framebuf_printf ("unblocking thread at %p \n", t);
     t->status = THREAD_READY;
-    list_push_back (&ready_list, &t->elem);
+    list_push_back (&ready_list, &(t->elem));
     //    lock_release (&ready_list_lock);
     interrupt_restore (state);
 };
@@ -243,9 +273,9 @@ thread_init (struct thread* t, int priority, const char* name)
     t->stack = ((uint8*) t) + PAGE_SIZE;
     t->magic = THREAD_MAGIC;
 
-    strncpy (t->name, name, 15);
+//    strncpy (t->name, name, 15);
 
-    list_push_back (&all_list, &t->all_elem);
+//    list_push_back (&all_list, &t->all_elem);
 
     return true;
 }; 
@@ -270,6 +300,7 @@ thread_yield ()
 void
 thread_tick ()
 {
+    ASSERT (thread_current () != NULL);
     thread_ticks++;
 
     if (thread_ticks >= TIME_SLICE)
@@ -280,6 +311,7 @@ static void
 start_kernel_thread (thread_func* func, void* aux)
 {
     ASSERT (func);
+    interrupt_on ();
 
     /* Execute the function and then clean up the thread */
     func (aux);
@@ -289,9 +321,10 @@ start_kernel_thread (thread_func* func, void* aux)
 void 
 schedule_tail (struct thread* prev)
 {
-    struct thread* cur = running_thread ();
+    struct thread* cur = thread_current ();
 
     ASSERT (prev != NULL);
+    ASSERT (prev->magic == THREAD_MAGIC);
 
     cur->status = THREAD_RUNNING;
 
@@ -304,15 +337,20 @@ schedule_tail (struct thread* prev)
     }
 };
 
+
 static void 
 schedule (void)
 {
+    framebuf_printf ("Schedule called \n");
     struct thread* cur = running_thread ();
     struct thread* next = next_thread ();
     struct thread* prev = cur;
+    framebuf_printf ("schedule: cur thread %p \n", cur);
+    framebuf_printf ("schedule: next thread %p \n", next);
 
     ASSERT (cur->status != THREAD_RUNNING);
     ASSERT (interrupt_get_state () == INTERRUPT_OFF);
+    ASSERT (cur->magic == THREAD_MAGIC);
     ASSERT (next->magic == THREAD_MAGIC);
 
     framebuf_printf ("cur: %p \n", cur);
@@ -327,22 +365,25 @@ schedule (void)
 static struct thread* 
 next_thread ()
 {
-    if (!list_empty (&ready_list))
-        return LIST_ENTRY (list_pop_front (&ready_list), 
-            struct thread, elem);
-    else
-        return running_thread ();
+    ASSERT (!list_empty (&ready_list));
+    struct thread* t = (struct thread*)
+        LIST_ENTRY (list_pop_front (&ready_list), struct thread, elem);
+    framebuf_printf ("got next thread.  Address: %p \n", t);
+//    ASSERT (t->magic == THREAD_MAGIC);
+    return t;
 };
 
 
 static int 
 idle (void* aux)
 {
-    struct semaphore* sema = aux;
+//    struct semaphore* sema = aux;
+    struct spinlock* spin = aux;
 
     ASSERT (aux != NULL);
 
-    sema_up (sema);
+//    sema_up (sema);
+    spinlock_release (&spin);
 
     while (1)
     {

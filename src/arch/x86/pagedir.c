@@ -55,7 +55,7 @@ init_pagedir ()
     addr = 0;
     for (i = 0; i < 1024; i++)
     {
-        if (i < 256)
+        if (i < 1024)
         {
             struct page_table* pt = 
                 (struct page_table*) frame_mgr_alloc (1, false, true);

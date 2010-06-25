@@ -40,8 +40,9 @@ list_pop_back (struct list* list)
     ASSERT (list != NULL);
 
     struct list_elem* e = list_back (list);
+    e = e->prev;
 	ASSERT (e->prev != NULL);
-    list_remove (e->prev);
+    list_remove (e);
     return e;
 };
 
@@ -69,8 +70,8 @@ list_insert_before (struct list_elem* elem, struct list_elem* data)
     struct list_elem* prev = elem->prev;    
     data->prev = prev;
     data->next = elem;
+    elem->prev->next = data;
     elem->prev = data;
-    prev->next = data;
 };
 
 void 

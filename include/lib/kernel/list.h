@@ -17,7 +17,8 @@ struct list
 };
 
 #define LIST_ENTRY(ELEM, TYPE, MEMBER)    \
-    ((TYPE*) ((ELEM) - offsetof(TYPE, MEMBER)))
+    ((TYPE*) ((uint8*) &(ELEM)->next  \
+        - offsetof(TYPE, MEMBER.next)))
 
 #define LIST_ELEM_INITIALIZER   \
 {   \

@@ -128,14 +128,17 @@ main (multiboot_info_t *mboot_ptr, int magic)
     // init_threads ();
 
 
-    /* Enable interrupts */
-//    asm volatile ("sti");
+    /* Creates an idle thread. */
+    framebuf_printf ("starting threading... \n");
     start_threading ();
+    framebuf_printf ("threading started! \n");
     
     ASSERT (interrupt_get_state () == INTERRUPT_ON);
 
+    framebuf_printf ("creating a new thread \n");
     // TODO: start the kernel here
     tid_t tid = thread_create (PRI_MED, "test thread 1", test_thread_create_func, NULL);
+    framebuf_printf ("created the new thread \n");
 
     while (1)   {
         framebuf_printf ("main thread speaking \n");

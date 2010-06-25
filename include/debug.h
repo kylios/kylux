@@ -21,6 +21,7 @@ void hexdump (void* start, uint32 sz);
     printf ("DEBUG %s: %d (`%s')\n", __FILE__, __LINE__, __func__);
 
 #define PANIC(MSG)  \
+    interrupt_off ();   \
     printf ("!!!KERNEL PANIC: %s \n", MSG); \
     while (1);  
 

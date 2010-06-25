@@ -90,13 +90,13 @@ test:
 	all 
 
 clean:
-	for d in $(DIRS); do -rm src/$$d/*.o 2>/dev/null; -rm src/$$d/.*.swo 2>/dev/null; -rm src/$$d/.*.swp 2>/dev/null; done
-	for d in $(DIRS); do rm -include/$$d/.*.swo 2>/dev/null; -rm include/$$d/.*.swp 2>/dev/null; done
-	-rm .*.swp 2>/dev/null
-	-rm .*.swo 2>/dev/null
-	-rm kernel 2>/dev/null
-	-rm *.i 2>/dev/null
-	-rm *.s 2>/dev/null
+	for d in $(DIRS); do rm src/$$d/*.o >/dev/null; rm src/$$d/.*.swo >/dev/null; rm src/$$d/.*.swp >/dev/null; done
+	for d in $(DIRS); do rm include/$$d/.*.swo >/dev/null; rm include/$$d/.*.swp >/dev/null; done
+	rm .*.swp >/dev/null
+	rm .*.swo >/dev/null
+	rm kernel >/dev/null
+	rm *.i >/dev/null
+	rm *.s >/dev/null
 
 kylux:		FORCE
 	sudo make reset && make && make install && make run
@@ -126,8 +126,7 @@ reset:
 # floppy disk to find the kernel.
 run:
 	sudo losetup /dev/loop0 floppy.img
-	sudo bochs -q -f ./bochsrc.txt
-#	qemu -fda floppy.img
+	-sudo bochs -q -f ./bochsrc.txt
 	sudo losetup -d /dev/loop0
 
 link:
