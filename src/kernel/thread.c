@@ -383,7 +383,7 @@ idle (void* aux)
     ASSERT (aux != NULL);
 
 //    sema_up (sema);
-    spinlock_release (&spin);
+    spinlock_release (spin);
 
     while (1)
     {

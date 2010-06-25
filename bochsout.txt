@@ -36,7 +36,7 @@
 00000000000i[MEM0 ] rom at 0xc0000/40448 ('bochs/bios/VGABIOS-lgpl-latest')
 00000000000i[VTIME] using 'realtime pit' synchronization method
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Fri Jun 25 01:24:01 2010 (time0=1277443441)
+00000000000i[CMOS ] Setting initial clock to: Fri Jun 25 09:01:12 2010 (time0=1277470872)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000e[FDD  ] cannot determine media geometry, trying to use defaults
@@ -94,53 +94,53 @@
 00000750184i[BIOS ] Shutdown flag 0
 00000750865i[BIOS ] ram_size=0x02000000
 00000751343i[BIOS ] ram_end=32MB
-00000788641i[BIOS ] Found 1 cpu(s)
-00000807868i[BIOS ] bios_table_addr: 0x000fbba8 end=0x000fcc00
-00000823231i[BIOS ] MP table addr=0x000fbc80 MPC table addr=0x000fbbb0 size=0xd0
-00000825075i[BIOS ] SMBIOS table addr=0x000fbc90
-00000825958i[BIOS ] bios_table_cur_addr: 0x000fbd94
-00025828107i[BIOS ] Booting from 0000:7c00
-00027445792i[BIOS ] int13_harddisk: function 41, unmapped device for ELDL=80
-00027450569i[BIOS ] int13_harddisk: function 08, unmapped device for ELDL=80
-00027455222i[BIOS ] *** int 15h function AX=00c0, BX=0000 not yet supported!
-00117658893i[CPU0 ] CPU is in protected mode (active)
-00117658893i[CPU0 ] CS.d_b = 32 bit
-00117658893i[CPU0 ] SS.d_b = 32 bit
-00117658893i[CPU0 ] | EAX=00067000  EBX=f000ff53  ECX=00113000  EDX=0010a014
-00117658893i[CPU0 ] | ESP=00000000  EBP=f000ff53  ESI=f000ff53  EDI=f000ff53
-00117658893i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf SF zf af PF CF
-00117658893i[CPU0 ] | SEG selector     base    limit G D
-00117658893i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00117658893i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] | EIP=00103960 (00103960)
-00117658893i[CPU0 ] | CR0=0xe0000011 CR2=0xfffffffc
-00117658893i[CPU0 ] | CR3=0x0010c000 CR4=0x00000000
-00117658893i[CPU0 ] 0x00103960>> pushad  : 60
-00117658893p[CPU0 ] >>PANIC<< exception(): 3rd (14) exception with no resolution
-00117658893i[CPU0 ] CPU is in protected mode (active)
-00117658893i[CPU0 ] CS.d_b = 32 bit
-00117658893i[CPU0 ] SS.d_b = 32 bit
-00117658893i[CPU0 ] | EAX=00067000  EBX=f000ff53  ECX=00113000  EDX=0010a014
-00117658893i[CPU0 ] | ESP=00000000  EBP=f000ff53  ESI=f000ff53  EDI=f000ff53
-00117658893i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf SF zf af PF CF
-00117658893i[CPU0 ] | SEG selector     base    limit G D
-00117658893i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00117658893i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00117658893i[CPU0 ] | EIP=00103960 (00103960)
-00117658893i[CPU0 ] | CR0=0xe0000011 CR2=0xfffffffc
-00117658893i[CPU0 ] | CR3=0x0010c000 CR4=0x00000000
-00117658893i[CPU0 ] 0x00103960>> pushad  : 60
-00117658893i[CMOS ] Last time is 1277443676 (Fri Jun 25 01:27:56 2010)
-00117658893i[XGUI ] Exit
-00117658893i[     ] restoring default signal behavior
-00117658893i[CTRL ] quit_sim called with exit code 1
+00000787753i[BIOS ] Found 1 cpu(s)
+00000806980i[BIOS ] bios_table_addr: 0x000fbba8 end=0x000fcc00
+00000822343i[BIOS ] MP table addr=0x000fbc80 MPC table addr=0x000fbbb0 size=0xd0
+00000824187i[BIOS ] SMBIOS table addr=0x000fbc90
+00000825070i[BIOS ] bios_table_cur_addr: 0x000fbd94
+00025545050i[BIOS ] Booting from 0000:7c00
+00027162735i[BIOS ] int13_harddisk: function 41, unmapped device for ELDL=80
+00027167512i[BIOS ] int13_harddisk: function 08, unmapped device for ELDL=80
+00027172165i[BIOS ] *** int 15h function AX=00c0, BX=0000 not yet supported!
+00113997288i[CPU0 ] CPU is in protected mode (active)
+00113997288i[CPU0 ] CS.d_b = 32 bit
+00113997288i[CPU0 ] SS.d_b = 32 bit
+00113997288i[CPU0 ] | EAX=00067000  EBX=f000ff53  ECX=00113000  EDX=0010a014
+00113997288i[CPU0 ] | ESP=00000000  EBP=f000ff53  ESI=f000ff53  EDI=f000ff53
+00113997288i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf SF zf af PF CF
+00113997288i[CPU0 ] | SEG selector     base    limit G D
+00113997288i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00113997288i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] | EIP=00103960 (00103960)
+00113997288i[CPU0 ] | CR0=0xe0000011 CR2=0xfffffffc
+00113997288i[CPU0 ] | CR3=0x0010c000 CR4=0x00000000
+00113997288i[CPU0 ] 0x00103960>> pushad  : 60
+00113997288p[CPU0 ] >>PANIC<< exception(): 3rd (14) exception with no resolution
+00113997288i[CPU0 ] CPU is in protected mode (active)
+00113997288i[CPU0 ] CS.d_b = 32 bit
+00113997288i[CPU0 ] SS.d_b = 32 bit
+00113997288i[CPU0 ] | EAX=00067000  EBX=f000ff53  ECX=00113000  EDX=0010a014
+00113997288i[CPU0 ] | ESP=00000000  EBP=f000ff53  ESI=f000ff53  EDI=f000ff53
+00113997288i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf SF zf af PF CF
+00113997288i[CPU0 ] | SEG selector     base    limit G D
+00113997288i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00113997288i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00113997288i[CPU0 ] | EIP=00103960 (00103960)
+00113997288i[CPU0 ] | CR0=0xe0000011 CR2=0xfffffffc
+00113997288i[CPU0 ] | CR3=0x0010c000 CR4=0x00000000
+00113997288i[CPU0 ] 0x00103960>> pushad  : 60
+00113997288i[CMOS ] Last time is 1277471099 (Fri Jun 25 09:04:59 2010)
+00113997288i[XGUI ] Exit
+00113997288i[     ] restoring default signal behavior
+00113997288i[CTRL ] quit_sim called with exit code 1

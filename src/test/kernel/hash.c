@@ -71,7 +71,7 @@ test_hash ()
     struct hash_elem* efound;
     struct test_hash_int* found;
     efound = hash_find (&h1, &find.elem, NULL);
-    assert (efound != NULL);
+    ASSERT (efound != NULL);
     found = HASH_ENTRY (efound, struct test_hash_int, elem);
     test_msg ("Found %d\n", found->i);
 
@@ -116,6 +116,6 @@ test_hash_int_print (struct list_elem* e)
 
     ASSERT (e != NULL);    
 
-    i = LIST_ENTRY (e, struct test_hash_int, elem);
+//    i = LIST_ENTRY (e, struct test_hash_int, elem);
     test_msg ("%d", i->i);
 };
