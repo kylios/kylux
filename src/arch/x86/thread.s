@@ -1,4 +1,9 @@
 [GLOBAL switch_threads]
+%macro  CUR 20
+%endmacro
+
+%macro  NEXT 24
+%endmacro
 
 extern thread_stack_offset  ; offset of the stack member of struct thread
                             ; it is required so we can set esp to the 
@@ -11,7 +16,14 @@ switch_threads:
     push esi
     push edi
 
-    mov edx, thread_stack_offset
+    mov edx, 12 ; thread_stack_offset
+;    mov eax, edx
+
+    ;pop edi
+    ;pop esi
+    ;pop ebp
+    ;pop ebx
+    ;ret
     mov eax, [esp + 20]     ; move the cur member (first parameter to 
                             ; function switch_threads) into eax
     mov [eax + edx], esp    ; move esp (the stack pointer) into the 

@@ -27,13 +27,13 @@
 void enable_interrupts (void);
 void disable_interrupts (void);
 
-static enum interrupt_state cur_state;
+static enum interrupt_state cur_state = INTERRUPT_OFF;
 
 enum interrupt_state 
 interrupt_off ()
 {
-    cur_state = INTERRUPT_OFF;
     disable_interrupts ();
+    cur_state = INTERRUPT_OFF;
 
     return cur_state;
 };

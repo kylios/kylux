@@ -75,7 +75,7 @@ SOURCES			= 	$(SRC)	\
 CFLAGS= -Wall   \
 	-Iinclude/ -Linclude/lib/kernel/ \
     -nostdlib -nostdinc -fno-builtin -fno-stack-protector   \
-    -Winline
+    -Winline -O0
 # These flags are enabled when `make test' is invoked
 TESTFLAGS=-D WITH_ASSERTS -g
 LDFLAGS=-Tlink.ld

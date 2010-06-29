@@ -22,9 +22,9 @@ char*
 strcpy (char* destination, const char* source)
 {
     char* dest = destination;
-    char* src = source;
+    const char* src = source;
     char* d = dest;
-    char* s = src;
+    const char* s = src;
 
     ASSERT (dest != NULL);
     ASSERT (src != NULL);
@@ -42,9 +42,9 @@ char*
 strncpy (char* destination, const char* source, size_t num)
 {
     char* dest = destination;
-    char* src = source;
+    const char* src = source;
     char* d = dest;
-    char* s = src;
+    const char* s = src;
     int count = 0;
 
     ASSERT (dest != NULL);
@@ -62,7 +62,7 @@ strncpy (char* destination, const char* source, size_t num)
 int 
 strlen (const char* str)
 {
-    char* c = str;
+    const char* c = str;
     int count = 0;
 
     ASSERT (str != NULL);
@@ -78,7 +78,7 @@ strlen (const char* str)
 int 
 strnlen (const char* str, size_t num)
 {
-    char* c = str;
+    const char* c = str;
     int count = 0;
 
     ASSERT (str != NULL);

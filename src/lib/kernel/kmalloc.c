@@ -25,6 +25,7 @@
 #include "type.h"
 #include "debug.h"
 #include "common.h"
+#include "kernel/interrupt.h"
 
 static struct pool pools[11];
 

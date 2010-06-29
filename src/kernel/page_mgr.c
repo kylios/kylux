@@ -24,6 +24,7 @@
 #include "kernel/page_mgr.h"
 #include "kernel/frame_mgr.h"
 #include "lib/kernel/kmalloc.h"
+#include "kernel/interrupt.h"
 
 /* Brings this page into memory such that a page fault should no longer 
    occur on this page */

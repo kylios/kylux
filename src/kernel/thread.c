@@ -83,7 +83,7 @@ static struct thread* next_thread ();
 /* The routine used for the idle thread */
 static int idle (void* aux);
 
-uint32 thread_stack_offset;
+int thread_stack_offset;
 
 void
 init_thread ()
@@ -98,6 +98,7 @@ init_thread ()
 
     next_tid = 1;
     thread_stack_offset = offsetof (struct thread, stack);
+//    framebuf_printf ("stack_offset: %d \n", thread_stack_offset);
 
     t = running_thread ();
     initial_thread = t;
@@ -113,25 +114,24 @@ void
 start_threading ()
 {
     ASSERT (interrupt_get_state () == INTERRUPT_OFF);
-//    struct semaphore thread_created;
-    struct spinlock thread_created;
-    spinlock_init (&thread_created);
-    spinlock_acquire (&thread_created);
-//    sema_init (&thread_created, 0);
 
-    framebuf_printf ("creating a new thread \n");
+    struct semaphore thread_created;
+    sema_init (&thread_created, 0);
+
+//    framebuf_printf ("creating a new thread \n");
     tid_t tid = thread_create (PRI_MIN, "idle", &idle, &thread_created);
-    framebuf_printf ("created the new thread... enabling interrupts \n");
+//    framebuf_printf ("created the new thread... enabling interrupts \n");
     if (tid == TID_ERROR)
     {
         PANIC ("ERROR creating idle thread!! \n");
     }
     interrupt_on ();
 
-    framebuf_printf ("interrupts enabled, trying to acquire the spinlock \n");
-//    sema_down (&thread_created);
-    spinlock_acquire (&thread_created);
-    framebuf_printf ("got the lock! \n");
+//    framebuf_printf ("interrupts enabled, trying to acquire the spinlock \n");
+    sema_down (&thread_created);
+//    spinlock_acquire (&thread_created);
+//    framebuf_printf ("got the lock! \n");
+    ASSERT (interrupt_get_state () == INTERRUPT_ON);
 };
 
 
@@ -283,9 +283,6 @@ thread_init (struct thread* t, int priority, const char* name)
 void 
 thread_yield ()
 {
-    uint8* esp;
-    asm volatile ("mov %%esp, %0" : "=g" (esp));
-
     struct thread* cur = thread_current ();
     enum interrupt_state state = interrupt_off ();
 
@@ -321,8 +318,9 @@ start_kernel_thread (thread_func* func, void* aux)
 void 
 schedule_tail (struct thread* prev)
 {
-    struct thread* cur = thread_current ();
+    struct thread* cur = running_thread ();
 
+    ASSERT (cur != NULL);
     ASSERT (prev != NULL);
     ASSERT (prev->magic == THREAD_MAGIC);
 
@@ -332,32 +330,39 @@ schedule_tail (struct thread* prev)
 
     if (prev != NULL && prev->status == THREAD_DYING && prev != initial_thread)
     {
+//        framebuf_printf ("killing prev thread \n");
         ASSERT (prev != cur);
         frame_mgr_free (prev);
     }
+
+//    interrupt_on ();
 };
 
 
 static void 
 schedule (void)
 {
-    framebuf_printf ("Schedule called \n");
+//    framebuf_printf ("Schedule called \n");
     struct thread* cur = running_thread ();
     struct thread* next = next_thread ();
     struct thread* prev = cur;
-    framebuf_printf ("schedule: cur thread %p \n", cur);
-    framebuf_printf ("schedule: next thread %p \n", next);
+//    framebuf_printf ("schedule: cur thread %p \n", cur);
+//    framebuf_printf ("schedule: next thread %p \n", next);
 
     ASSERT (cur->status != THREAD_RUNNING);
     ASSERT (interrupt_get_state () == INTERRUPT_OFF);
     ASSERT (cur->magic == THREAD_MAGIC);
     ASSERT (next->magic == THREAD_MAGIC);
 
-    framebuf_printf ("cur: %p \n", cur);
-    framebuf_printf ("next: %p \n", next);
-    framebuf_printf ("prev: %p \n", prev);
+//    framebuf_printf ("cur: %p \n", cur);
+//    framebuf_printf ("next: %p \n", next);
+//    framebuf_printf ("prev: %p \n", prev);
     if (cur != next)
+    {
+//        framebuf_printf ("calling switch_threads \n");
         prev = switch_threads (cur, next);
+    }
+//    framebuf_printf ("Threads switched!  Calling schedule_tail \n");
     schedule_tail (prev);
 };
 
@@ -368,7 +373,7 @@ next_thread ()
     ASSERT (!list_empty (&ready_list));
     struct thread* t = (struct thread*)
         LIST_ENTRY (list_pop_front (&ready_list), struct thread, elem);
-    framebuf_printf ("got next thread.  Address: %p \n", t);
+//    framebuf_printf ("got next thread.  Address: %p \n", t);
 //    ASSERT (t->magic == THREAD_MAGIC);
     return t;
 };
@@ -377,13 +382,13 @@ next_thread ()
 static int 
 idle (void* aux)
 {
-//    struct semaphore* sema = aux;
-    struct spinlock* spin = aux;
+    struct semaphore* sema = aux;
+//    struct spinlock* spin = aux;
 
     ASSERT (aux != NULL);
 
-//    sema_up (sema);
-    spinlock_release (spin);
+    sema_up (sema);
+//    spinlock_release (spin);
 
     while (1)
     {

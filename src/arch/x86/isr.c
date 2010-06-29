@@ -1,15 +1,21 @@
 #include "arch/x86/isr.h"
 #include "arch/x86/io_bus.h"
 #include "type.h"
+#include "debug.h"
 #include "lib/string.h"
 #include "lib/stdio.h"
 
 static isr_func* isr_list[256];
 
+/* Handler functions */
+static void isr_invalid_opcode_exception (struct registers*);
+
 void
 isr_init ()
 {
     memset (isr_list, 0, 256 * sizeof (void*));
+
+    isr_reg_func (ISR_INVALID_OPCODE_EXCEPTION, isr_invalid_opcode_exception);
 };
 
 void 
@@ -45,3 +51,10 @@ isr_reg_func (enum isr_num num, isr_func* func)
 	isr_list[num] = func;
 };
 
+static void 
+isr_invalid_opcode_exception (struct registers* regs)
+{
+    ASSERT (regs != NULL);    
+
+    framebuf_printf ("Invalid opcode exception at address %p \n", regs->eip);
+};
