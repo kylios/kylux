@@ -66,6 +66,12 @@ struct thread
    order to execute. */
 typedef int thread_func (void*);
 
+/* Print a list elem with a thread in it */
+void thread_list_print (struct list_elem*);
+
+/* Print the entire ready list */
+void thread_print_ready_list ();
+
 /* Initializes the threading system.  */
 void init_thread ();
 void start_threading ();

@@ -150,3 +150,47 @@ test_list_int_cmp (struct list_elem* a, struct list_elem* b, void* aux)
 
     return ia->i - ib->i;
 };
+
+void test_list_add ();
+void test_list_remove ();
+void test_list_front ();
+void test_list_back ();
+void test_list_insert_before ();
+void test_list_insert_after ();
+void test_list_insert_ordered ();
+
+#define LIST_TEST_MAGIC 0xc9a53fa8
+struct list_test_struct
+{
+    struct list_elem elem;
+    const char* name;
+    int magic;
+};
+
+void test_list_round_robbin ()
+{
+    struct list l1;
+    struct list* pl1 = &l1;
+
+    list_init (pl1);
+
+    struct list_test_struct test1;
+    test1.magic = LIST_TEST_MAGIC;
+    test1.name = "test1";
+    list_push_back (pl1, &test1.elem);
+
+    struct list_test_struct test2;
+    test2.magic = LIST_TEST_MAGIC;
+    test2.name = "test2";
+    list_push_back (pl1, &test2.elem);
+
+    while (true)    {
+        struct list_test_struct* e = 
+            LIST_ENTRY(list_pop_front (pl1), struct list_test_struct, elem);
+        ASSERT (e->magic == LIST_TEST_MAGIC);
+        test_msg ("Name: %s \n", e->name);
+
+        list_push_back (pl1, &e->elem);
+    }
+
+};

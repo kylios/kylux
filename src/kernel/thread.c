@@ -187,9 +187,8 @@ thread_create (int priority, const char* name,
     list_push_back (&all_list, &t->all_elem);
 //    lock_release (&all_list_lock);
 
-    interrupt_restore (state);
-
     thread_unblock (t);
+    interrupt_restore (state);
     return t->tid;
 };
 
@@ -273,9 +272,7 @@ thread_init (struct thread* t, int priority, const char* name)
     t->stack = ((uint8*) t) + PAGE_SIZE;
     t->magic = THREAD_MAGIC;
 
-//    strncpy (t->name, name, 15);
-
-//    list_push_back (&all_list, &t->all_elem);
+    strncpy (t->name, name, 15);
 
     return true;
 }; 
@@ -335,7 +332,7 @@ schedule_tail (struct thread* prev)
         frame_mgr_free (prev);
     }
 
-//    interrupt_on ();
+    interrupt_on ();
 };
 
 
@@ -346,8 +343,8 @@ schedule (void)
     struct thread* cur = running_thread ();
     struct thread* next = next_thread ();
     struct thread* prev = cur;
-//    framebuf_printf ("schedule: cur thread %p \n", cur);
-//    framebuf_printf ("schedule: next thread %p \n", next);
+    framebuf_printf ("schedule: cur thread %p \n", cur);
+    framebuf_printf ("schedule: next thread %p \n", next);
 
     ASSERT (cur->status != THREAD_RUNNING);
     ASSERT (interrupt_get_state () == INTERRUPT_OFF);
@@ -362,6 +359,10 @@ schedule (void)
 //        framebuf_printf ("calling switch_threads \n");
         prev = switch_threads (cur, next);
     }
+    else
+    {
+        framebuf_printf ("did not switch threads... they were the same \n");
+    }
 //    framebuf_printf ("Threads switched!  Calling schedule_tail \n");
     schedule_tail (prev);
 };
@@ -370,11 +371,12 @@ schedule (void)
 static struct thread* 
 next_thread ()
 {
-    ASSERT (!list_empty (&ready_list));
-    struct thread* t = (struct thread*)
+//    if (list_empty (&ready_list))
+//        return idle_thread;
+    struct thread* t = 
         LIST_ENTRY (list_pop_front (&ready_list), struct thread, elem);
 //    framebuf_printf ("got next thread.  Address: %p \n", t);
-//    ASSERT (t->magic == THREAD_MAGIC);
+    ASSERT (t->magic == THREAD_MAGIC);
     return t;
 };
 
@@ -383,17 +385,14 @@ static int
 idle (void* aux)
 {
     struct semaphore* sema = aux;
-//    struct spinlock* spin = aux;
-
     ASSERT (aux != NULL);
 
     sema_up (sema);
-//    spinlock_release (spin);
 
     while (1)
     {
         thread_printf ("idle thread running \n");
-        thread_yield ();
+//        thread_yield ();
     };
 
     NOT_REACHED;
@@ -408,12 +407,29 @@ thread_printf (const char* fmt, ...)
     ASSERT (fmt != NULL);
     va_start (args, fmt);
 
-
-//    framebuf_printf ("%s: ", thread_current ()->name);
+    framebuf_printf ("%s: ", thread_current ()->name);
     int val = vprintf (fmt, args);
     framebuf_printf ("\n");
 
     va_end (args);
 
     return val;
+};
+
+void 
+thread_list_print (struct list_elem* e)
+{
+    struct thread* t = LIST_ENTRY (e, struct thread, elem);
+
+    ASSERT (e != NULL);    
+    ASSERT (t != NULL);
+    ASSERT (t->magic == THREAD_MAGIC);
+
+    framebuf_printf ("Thread is at: %p \n", t);
+};
+
+void 
+thread_print_ready_list ()
+{
+    list_print (&ready_list, thread_list_print);
 };

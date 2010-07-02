@@ -22,7 +22,7 @@ list_push_back (struct list* list, struct list_elem* e)
     ASSERT (list != NULL);
     ASSERT (e != NULL);
 
-    list_insert_before (&list->tail, e);    
+    list_insert_before (list_back (list), e);    
 };
 
 void 
@@ -31,7 +31,7 @@ list_push_front (struct list* list, struct list_elem* e)
     ASSERT(list != NULL);
     ASSERT(e != NULL);
 
-    list_insert_after (&list->head, e);
+    list_insert_before (list_front (list), e);
 };
 
 struct list_elem* 
@@ -42,6 +42,7 @@ list_pop_back (struct list* list)
     struct list_elem* e = list_back (list);
     e = e->prev;
 	ASSERT (e->prev != NULL);
+    ASSERT (e != &list->head);
     list_remove (e);
     return e;
 };
@@ -56,6 +57,7 @@ list_pop_front (struct list* list)
 
     struct list_elem* e = list_front (list);
     ASSERT (e != NULL);
+    ASSERT (e != &list->head);
     list_remove (e);
     return e;
 };
@@ -67,8 +69,7 @@ list_insert_before (struct list_elem* elem, struct list_elem* data)
     ASSERT (elem != NULL);
     ASSERT (elem->prev != NULL);
     
-    struct list_elem* prev = elem->prev;    
-    data->prev = prev;
+    data->prev = elem->prev;
     data->next = elem;
     elem->prev->next = data;
     elem->prev = data;
@@ -147,6 +148,8 @@ struct list_elem*
 list_next (struct list_elem* e)
 {
     ASSERT (e != NULL);
+    ASSERT (e->next != NULL);
+    ASSERT (e->prev != NULL);
 
     return e->next;    
 };
@@ -155,6 +158,8 @@ struct list_elem*
 list_prev (struct list_elem* e)
 {
     ASSERT (e != NULL);
+    ASSERT (e->next != NULL);
+    ASSERT (e->prev != NULL);
 
     return e->prev;
 };

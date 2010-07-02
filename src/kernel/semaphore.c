@@ -41,7 +41,6 @@ sema_down (struct semaphore* sema)
     ASSERT (sema != NULL);
 
     enum interrupt_state state = interrupt_off ();
-    ASSERT (state == INTERRUPT_ON);
     /* All accesses to this semaphore must be synchronized using the
        semaphore's internal spinlock. */
     spinlock_acquire (&sema->sync);
@@ -61,6 +60,7 @@ sema_down (struct semaphore* sema)
     sema->val--;
     spinlock_release (&sema->sync);
     interrupt_restore (state);
+    interrupt_on ();
 };
 
 bool

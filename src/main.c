@@ -51,8 +51,6 @@ static int test_thread_create_func (void*);
 int 
 main (multiboot_info_t *mboot_ptr, int magic)
 {
-//    init_thread ();
-
     framebuf_init ();
     framebuf_clear ();
     framebuf_printf ("Welcome to Kylux!\n");
@@ -97,6 +95,7 @@ main (multiboot_info_t *mboot_ptr, int magic)
     printf ("%u available frames of memory \n", num_frames);
 
     /* It should be safe to run tests at this point */
+//    test_list_round_robbin ();
 //#ifdef TEST_KERNEL
 //    run_kernel_tests ();
 //#endif // TEST_KERNEL
@@ -107,7 +106,6 @@ main (multiboot_info_t *mboot_ptr, int magic)
     user_frames = num_frames - kernel_frames;
     if (user_frames > kernel_options.user_frames)
         user_frames = kernel_options.user_frames;
-
 
     /* Initialize our memory management routines.  After this, we should
        have a working frame allocator and a kernel page directory.  */
@@ -120,14 +118,9 @@ main (multiboot_info_t *mboot_ptr, int magic)
     // PAGE FAULTING WORKS UP TO THIS POINT AND WE HAVE A PAGE DIR
     // THAT MAPS THE FIRST 8MiB (??) 
 
-    ASSERT (interrupt_get_state () == INTERRUPT_OFF);
     /* Initialise the hardware timer */
     init_timer ();
-
-    /* Initilize threading system and start kernel + idle threads */
-    // init_threads ();
-
-
+    
     /* Creates an idle thread. */
     framebuf_printf ("starting threading... \n");
     start_threading ();
@@ -140,9 +133,18 @@ main (multiboot_info_t *mboot_ptr, int magic)
     tid_t tid = thread_create (PRI_MED, "test thread 1", test_thread_create_func, NULL);
     framebuf_printf ("created the new thread \n");
 
-    while (1)   {
+    int i = 0;
+    while (true)   {
         framebuf_printf ("main thread speaking \n");
-       }
+    }
+//    while (true);
+
+//    int i = 0;
+//    for (i; i < 500; i++) {
+//        framebuf_printf ("%d\n", i);
+//    }
+//    interrupt_off ();
+//    thread_print_ready_list ();
 
     return 0xDEADBABA;
 } 

@@ -34,5 +34,15 @@ struct test_list_int
 /* Test the fnuctionality of our linked list. */
 void test_list ();
 
+void test_list_add ();
+void test_list_remove ();
+void test_list_front ();
+void test_list_back ();
+void test_list_insert_before ();
+void test_list_insert_after ();
+void test_list_insert_ordered ();
+void test_list_round_robbin ();
+
+
 
 #endif  // TEST_KERNEL_LIST_H
